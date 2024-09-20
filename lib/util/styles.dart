@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sixam_mart/util/app_constants.dart';
 import 'package:sixam_mart/util/dimensions.dart';
-import 'package:flutter/material.dart';
 
 final robotoRegular = TextStyle(
   fontFamily: AppConstants.fontFamily,
@@ -11,7 +11,7 @@ final robotoRegular = TextStyle(
 
 final robotoMedium = TextStyle(
   fontFamily: AppConstants.fontFamily,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w700,
   fontSize: Dimensions.fontSizeDefault,
 );
 
@@ -29,5 +29,6 @@ final robotoBlack = TextStyle(
 
 final BoxDecoration riderContainerDecoration = BoxDecoration(
   borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
-  color: Theme.of(Get.context!).primaryColor.withOpacity(0.1), shape: BoxShape.rectangle,
+  color: Theme.of(Get.context!).primaryColor.withOpacity(0.1),
+  shape: BoxShape.rectangle,
 );

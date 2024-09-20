@@ -19,6 +19,7 @@ import 'package:sixam_mart/common/widgets/web_menu_bar.dart';
 import 'package:sixam_mart/features/checkout/widgets/payment_failed_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 class OrderSuccessfulScreen extends StatefulWidget {
   final String? orderID;
@@ -35,10 +36,12 @@ class _OrderSuccessfulScreenState extends State<OrderSuccessfulScreen> {
 
   bool? _isCashOnDeliveryActive = false;
   String? orderId;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+
 
     orderId = widget.orderID!;
     if(widget.orderID != null) {
@@ -50,6 +53,13 @@ class _OrderSuccessfulScreenState extends State<OrderSuccessfulScreen> {
     }
 
     Get.find<OrderController>().trackOrder(orderId.toString(), null, false, contactNumber: widget.contactPersonNumber);
+  }
+
+  void _startApiCall(){
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      await Get.find<OrderController>().timerTrackOrder(orderId.toString(), contactNumber: widget.contactPersonNumber);
+    });
   }
 
   @override
@@ -163,7 +173,7 @@ class _OrderSuccessfulScreenState extends State<OrderSuccessfulScreen> {
                   ),
 
                 ]) : const SizedBox.shrink() ,
-                const SizedBox(height: 30),
+                const SizedBox(height: 5),
 
                 Padding(
                   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
@@ -175,6 +185,22 @@ class _OrderSuccessfulScreenState extends State<OrderSuccessfulScreen> {
                     }
                     Get.offAllNamed(RouteHelper.getInitialRoute());
                   }),
+                ),
+
+                // const SizedBox(height: 5),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:0),
+                  child: CustomButton(
+                    buttonText: parcel ? 'track_delivery'.tr : 'track_order'.tr,
+                    margin: ResponsiveHelper.isDesktop(context) ? null : const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                    onPressed: () async{
+                      _timer?.cancel();
+                      await Get.toNamed(RouteHelper.getOrderTrackingRoute(orderController.trackModel?.id, widget.contactPersonNumber))?.whenComplete(() {
+                        _startApiCall();
+                      });
+                    },
+                  ),
                 ),
               ]))),
             ),

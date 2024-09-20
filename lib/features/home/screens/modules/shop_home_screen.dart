@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:sixam_mart/features/home/widgets/brands_view_widget.dart';
 import 'package:sixam_mart/features/home/widgets/highlight_widget.dart';
 import 'package:sixam_mart/helper/auth_helper.dart';
@@ -19,6 +21,9 @@ import 'package:sixam_mart/features/home/widgets/views/visit_again_view.dart';
 import 'package:sixam_mart/features/home/widgets/banner_view.dart';
 import 'package:sixam_mart/features/home/widgets/views/category_view.dart';
 
+import '../../../../util/dimensions.dart';
+import '../../../banner/controllers/banner_controller.dart';
+
 class ShopHomeScreen extends StatelessWidget {
   const ShopHomeScreen({super.key});
 
@@ -27,26 +32,73 @@ class ShopHomeScreen extends StatelessWidget {
     bool isLoggedIn = AuthHelper.isLoggedIn();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
+      GetBuilder<BannerController>(
+        builder: (bannerController) {
+          // Check if promotionalBanner is null
+          if (bannerController.promotionalBanner == null) {
+            return const PromotionalBannerShimmerView();
+          }
+
+          // Check if bottomSectionBannerFullUrl is null
+          var sbgurl =
+              bannerController.promotionalBanner!.bottomSectionBannerFullUrl;
+          if (sbgurl == null) {
+            return const SizedBox();
+          }
+
+          return ClipRRect(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(16.0),
+              bottomRight: Radius.circular(16.0),
+            ),
+            child: Container(
+              // height: 350,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(sbgurl),
+                  fit: BoxFit.fitWidth,
+                ),
+                borderRadius:
+                BorderRadius.circular(Dimensions.paddingSizeExtraSmall),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 190),
+
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+
       Container(
         width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(Images.shopModuleBannerBg),
-            fit: BoxFit.cover,
-          ),
-        ),
+        // decoration: const BoxDecoration(
+        //   image: DecorationImage(
+        //     image: AssetImage(Images.shopModuleBannerBg),
+        //     fit: BoxFit.cover,
+        //   ),
+        // ),
         child: const Column(
           children: [
+
+
             BadWeatherWidget(),
 
-            BannerView(isFeatured: false),
-            SizedBox(height: 12),
+
+            // SizedBox(height: 12),
           ],
         ),
       ),
-
       const CategoryView(),
-      isLoggedIn ? const VisitAgainView() : const SizedBox(),
+
+      BannerView(isFeatured: false),
+
+      // isLoggedIn ? const VisitAgainView() : const SizedBox(),
       const MostPopularItemView(isFood: false, isShop: true),
       const FlashSaleViewWidget(),
       const MiddleSectionBannerView(),
@@ -60,7 +112,7 @@ class ShopHomeScreen extends StatelessWidget {
       // const StoreWiseBannerView(),
       const ItemThatYouLoveView(forShop: true,),
       const NewOnMartView(isShop: true,isPharmacy: false),
-      const PromotionalBannerView(),
+      // const PromotionalBannerView(),
     ]);
   }
 }

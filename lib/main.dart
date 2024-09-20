@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:sixam_mart/features/auth/controllers/auth_controller.dart';
 import 'package:sixam_mart/features/cart/controllers/cart_controller.dart';
@@ -19,7 +20,6 @@ import 'package:sixam_mart/util/app_constants.dart';
 import 'package:sixam_mart/util/messages.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -36,17 +36,17 @@ Future<void> main() async {
   setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Pass all uncaught "fatal" errors from the framework to Crashlytics
-  // FlutterError.onError = (errorDetails) {
-  //   FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  // };
+ /* ///Pass all uncaught "fatal" errors from the framework to Crashlytics
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
 
 
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  // PlatformDispatcher.instance.onError = (error, stack) {
-  //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-  //   return true;
-  // };
+  ///Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };*/
 
   if(GetPlatform.isWeb){
     await Firebase.initializeApp(options: const FirebaseOptions(
@@ -56,23 +56,17 @@ Future<void> main() async {
         // storageBucket: "ammart-8885e.appspot.com",
         // messagingSenderId: "1000163153346",
         // appId: "1:1000163153346:web:4f702a4b5adbd5c906b25b",
-
         apiKey: "AIzaSyBD8y94jkfOalJiwFvSuwx1ULp4tOJqdaA",
         authDomain: "tailcare.firebaseapp.com",
         projectId: "tailcare",
         storageBucket: "tailcare.appspot.com",
         messagingSenderId: "298536590839",
         appId: "1:298536590839:web:ae1997972442cfc8b8e2f2",
-        measurementId: "G-P78K4B9Z1E",
+        measurementId: "G-P78K4B9Z1E"
     ));
   } else if(GetPlatform.isAndroid) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        // apiKey: "AIzaSyCic6Mw3RRPFcimXhwGidwhCN0tXY7HFFc",
-        // appId: "1:1000163153346:android:9d8caf29b912e11606b25b",
-        // messagingSenderId: "1000163153346",
-        // projectId: "ammart-8885e",
-
         apiKey: "AIzaSyB02CxJw0Ixzp1J2YydpF7YWWWKcAd7rp0",
         appId: "1:298536590839:android:f5d3407d83300951b8e2f2",
         messagingSenderId: "298536590839",

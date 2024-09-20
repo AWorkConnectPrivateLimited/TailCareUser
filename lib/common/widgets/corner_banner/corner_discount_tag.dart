@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' hide Banner;
 import 'package:get/get.dart';
@@ -36,7 +38,7 @@ class CornerDiscountTag extends StatelessWidget {
     if (isPositioned) {
       return PositionedCornerBanner(
         bannerPosition: bannerPosition,
-        bannerColor: Theme.of(context).colorScheme.error,
+        bannerColor: const Color(0xFFF3F6F8),
         elevation: elevation,
         shadowColor: shadowColor,
         child: _buildBannerContent(),
@@ -44,7 +46,7 @@ class CornerDiscountTag extends StatelessWidget {
     } else {
       return (discount! > 0 || freeDelivery!) ? CornerBanner(
         bannerPosition: bannerPosition,
-        bannerColor: Theme.of(context).colorScheme.error,
+        bannerColor: const Color(0xFFF3F6F8),
         elevation: 5,
         shadowColor: Colors.transparent,
         child: _buildBannerContent(),
@@ -68,15 +70,17 @@ class CornerDiscountTag extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children:  [
-                Text(
+                Transform.rotate(
+                  angle: 180 * (pi / 180), // Convert degrees to radians
+                  child: Text(
                   discount! > 0 ? '$discount${discountType == 'percent' ? '%'
                       : Get.find<SplashController>().configModel!.currencySymbol} ${'off'.tr}' : 'free_delivery'.tr,
                   style: robotoMedium.copyWith(
-                    color: Colors.white,
+                    color: const Color(0xFF4C4C80),
                     fontSize: fontSize ?? (ResponsiveHelper.isMobile(Get.context) ? 8 : 12),
                   ),
                   textAlign: TextAlign.center,
-                ),
+                )),
               ],
             ),
           ],

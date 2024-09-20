@@ -441,6 +441,13 @@ class ItemController extends GetxController implements GetxService {
         Dialog(child: ItemBottomSheet(item: item, inStorePage: inStore, isCampaign: isCampaign)),
       );
     }else {
+
+      // ResponsiveHelper.isMobile(context) ? Get.bottomSheet(
+      //   ItemBottomSheet(item: item, inStorePage: inStore, isCampaign: isCampaign),
+      //   backgroundColor: Colors.transparent, isScrollControlled: true,
+      // ) : Get.dialog(
+      //   Dialog(child: ItemBottomSheet(item: item, inStorePage: inStore, isCampaign: isCampaign)),
+      // );
       Get.toNamed(RouteHelper.getItemDetailsRoute(item.id, inStore), arguments: ItemDetailsScreen(item: item, inStorePage: inStore, isCampaign: isCampaign));
     }
   }

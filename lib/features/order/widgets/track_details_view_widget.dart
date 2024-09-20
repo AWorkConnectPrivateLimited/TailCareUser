@@ -45,8 +45,70 @@ class TrackDetailsViewWidget extends StatelessWidget {
         ),
       ) : Column(children: [
 
-        Text('trip_route'.tr, style: robotoMedium),
-        const SizedBox(height: Dimensions.paddingSizeLarge),
+        Align(alignment: Alignment.centerLeft, child: Text(
+          takeAway ? Get.find<SplashController>().configModel!.moduleConfig!.module!.showRestaurantText!
+              ? 'store'.tr : 'store'.tr : 'delivery_man'.tr,
+          style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall),
+        )),
+        const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
+            ClipOval(child: CustomImage(
+              image: '${takeAway ? (track.store != null ? track.store!.logoFullUrl : '') : track.deliveryMan!.imageFullUrl}',
+              height: 35, width: 35, fit: BoxFit.cover,
+            )),
+            const SizedBox(width: Dimensions.paddingSizeSmall),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                takeAway ? track.store != null ? track.store!.name! : '' : '${track.deliveryMan!.fName} ${track.deliveryMan!.lName}',
+                maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeExtraSmall),
+              ),
+              RatingBar(
+                rating: takeAway ? track.store != null ? track.store!.avgRating : '' as double? : track.deliveryMan!.avgRating, size: 10,
+                ratingCount: takeAway ? track.store != null ? track.store!.ratingCount : '' as int? : track.deliveryMan!.ratingCount,
+              ),
+            ])),
+            InkWell(
+              onTap: () async {
+                if(await canLaunchUrlString('tel:${takeAway ? track.store != null ? track.store!.phone : '' : track.deliveryMan!.phone}')) {
+                  launchUrlString('tel:${takeAway ? track.store != null ? track.store!.phone : '' : track.deliveryMan!.phone}', mode: LaunchMode.externalApplication);
+                }else {
+                  showCustomSnackBar('${'can_not_launch'.tr} ${takeAway ? track.store != null ? track.store!.phone : '' : track.deliveryMan!.phone}');
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeExtraSmall, horizontal: Dimensions.paddingSizeSmall),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                  color: Colors.green,
+                ),
+                child: Text(
+                  'call'.tr,
+                  style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).cardColor),
+                ),
+              ),
+            ),
+            const SizedBox(width: Dimensions.paddingSizeSmall),
+
+            showChatPermission ? InkWell(
+              onTap: callback as void Function()?,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: Get.context!.width >= 1300 ? 7 : Dimensions.paddingSizeExtraSmall, horizontal: Dimensions.paddingSizeSmall),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                  color: Colors.green,
+                ),
+                child: Icon(Icons.chat, size: 12, color: Theme.of(context).cardColor),
+              ),
+            ) : const SizedBox(),
+          ]),
+        ),
+
+        // Text('trip_route'.tr, style: robotoMedium),
+        // const SizedBox(height: Dimensions.paddingSizeLarge),
 
         Row(children: [
 
@@ -91,72 +153,15 @@ class TrackDetailsViewWidget extends StatelessWidget {
             const SizedBox(height: Dimensions.paddingSizeSmall),
           ]),
         ) : Column(children: [
-          Image.asset(Images.route, height: 20, width: 20, color: Theme.of(context).primaryColor),
+          Image.asset(Images.route, height: 30, width: 30, color: Theme.of(context).primaryColor),
           Text(
             '${distance.toStringAsFixed(2)} ${'km'.tr}',
             style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).disabledColor),
           ),
-          const SizedBox(height: Dimensions.paddingSizeSmall),
+
         ]),
 
-        Align(alignment: Alignment.centerLeft, child: Text(
-          takeAway ? Get.find<SplashController>().configModel!.moduleConfig!.module!.showRestaurantText!
-              ? 'store'.tr : 'store'.tr : 'delivery_man'.tr,
-          style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall),
-        )),
-        const SizedBox(height: Dimensions.paddingSizeExtraSmall),
 
-        Row(children: [
-          ClipOval(child: CustomImage(
-            image: '${takeAway ? (track.store != null ? track.store!.logoFullUrl : '') : track.deliveryMan!.imageFullUrl}',
-            height: 35, width: 35, fit: BoxFit.cover,
-          )),
-          const SizedBox(width: Dimensions.paddingSizeSmall),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              takeAway ? track.store != null ? track.store!.name! : '' : '${track.deliveryMan!.fName} ${track.deliveryMan!.lName}',
-              maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeExtraSmall),
-            ),
-            RatingBar(
-              rating: takeAway ? track.store != null ? track.store!.avgRating : '' as double? : track.deliveryMan!.avgRating, size: 10,
-              ratingCount: takeAway ? track.store != null ? track.store!.ratingCount : '' as int? : track.deliveryMan!.ratingCount,
-            ),
-          ])),
-          InkWell(
-            onTap: () async {
-              if(await canLaunchUrlString('tel:${takeAway ? track.store != null ? track.store!.phone : '' : track.deliveryMan!.phone}')) {
-                launchUrlString('tel:${takeAway ? track.store != null ? track.store!.phone : '' : track.deliveryMan!.phone}', mode: LaunchMode.externalApplication);
-              }else {
-                showCustomSnackBar('${'can_not_launch'.tr} ${takeAway ? track.store != null ? track.store!.phone : '' : track.deliveryMan!.phone}');
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeExtraSmall, horizontal: Dimensions.paddingSizeSmall),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                color: Colors.green,
-              ),
-              child: Text(
-                'call'.tr,
-                style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).cardColor),
-              ),
-            ),
-          ),
-          const SizedBox(width: Dimensions.paddingSizeSmall),
-
-          showChatPermission ? InkWell(
-            onTap: callback as void Function()?,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: Get.context!.width >= 1300 ? 7 : Dimensions.paddingSizeExtraSmall, horizontal: Dimensions.paddingSizeSmall),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                color: Colors.green,
-              ),
-              child: Icon(Icons.chat, size: 12, color: Theme.of(context).cardColor),
-            ),
-          ) : const SizedBox(),
-        ]),
 
       ]),
     );

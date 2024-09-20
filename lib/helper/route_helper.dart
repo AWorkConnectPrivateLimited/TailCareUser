@@ -90,6 +90,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sixam_mart/features/wallet/screens/wallet_screen.dart';
 
+import '../features/membership_plans_page.dart';
+
 class RouteHelper {
   static const String initial = '/';
   static const String splash = '/splash';
@@ -127,6 +129,7 @@ class RouteHelper {
   static const String rateReview = '/rate-and-review';
   static const String update = '/update';
   static const String cart = '/cart';
+  static const String membership = '/membership';
   static const String addAddress = '/add-address';
   static const String editAddress = '/edit-address';
   static const String storeReview = '/store-review';
@@ -143,7 +146,7 @@ class RouteHelper {
   static const String referAndEarn = '/refer-and-earn';
   static const String messages = '/messages';
   static const String conversation = '/conversation';
-  static const String restaurantRegistration = '/restaurant-registration';
+  static const String restaurantRegistration = '/store-registration';
   static const String deliveryManRegistration = '/delivery-man-registration';
   static const String refund = '/refund';
 
@@ -180,8 +183,12 @@ class RouteHelper {
   static String getOnBoardingRoute() => onBoarding;
   static String getSignInRoute(String page) => '$signIn?page=$page';
   static String getSignUpRoute() => signUp;
-  static String getVerificationRoute(String? number, String? token, String page, String pass) {
-    return '$verification?page=$page&number=$number&token=$token&pass=$pass';
+  static String getVerificationRoute(String? number, String? token, String page, String pass, {String? session}) {
+    String? authSession;
+    if(session != null) {
+      authSession = base64Url.encode(utf8.encode(session));
+    }
+    return '$verification?page=$page&number=$number&token=$token&pass=$pass&session=$authSession';
   }
   static String getAccessLocationRoute(String page) => '$accessLocation?page=$page';
   static String getPickMapRoute(String? page, bool canRoute) => '$pickMap?page=$page&route=${canRoute.toString()}';
@@ -215,8 +222,8 @@ class RouteHelper {
   static String getOrderSuccessRoute(String orderID, String? contactNumber, {bool? createAccount, String guestId = ''}) {
     return '$orderSuccess?id=$orderID&contact_number=$contactNumber&create_account=$createAccount&guest_id=$guestId';
   }
-  static String getPaymentRoute(String id, int? user, String? type, double amount, bool? codDelivery, String? paymentMethod, {required String guestId, String? contactNumber, String? addFundUrl, String? subscriptionUrl, int? storeId, bool? createAccount}
-      ) => '$payment?id=$id&user=$user&type=$type&amount=$amount&cod-delivery=$codDelivery&add-fund-url=$addFundUrl&payment-method=$paymentMethod&guest-id=$guestId&number=$contactNumber&subscription-url=$subscriptionUrl&store_id=$storeId&create_account=$createAccount';
+  static String getPaymentRoute(String id, int? user, String? type, double amount, bool? codDelivery, String? paymentMethod, {required String guestId, String? contactNumber, String? addFundUrl, String? subscriptionUrl, int? storeId, bool? createAccount, int? createUserId}
+      ) => '$payment?id=$id&user=$user&type=$type&amount=$amount&cod-delivery=$codDelivery&add-fund-url=$addFundUrl&payment-method=$paymentMethod&guest-id=$guestId&number=$contactNumber&subscription-url=$subscriptionUrl&store_id=$storeId&create_account=$createAccount&create_user_id=$createUserId';
   static String getCheckoutRoute(String page,{int? storeId}) => '$checkout?page=$page&store-id=$storeId';
   static String getOrderTrackingRoute(int? id, String? contactNumber) => '$orderTracking?id=$id&number=$contactNumber';
   static String getBasicCampaignRoute(BasicCampaignModel basicCampaignModel) {
@@ -236,6 +243,7 @@ class RouteHelper {
   static String getReviewRoute() => rateReview;
   static String getUpdateRoute(bool isUpdate) => '$update?update=${isUpdate.toString()}';
   static String getCartRoute() => cart;
+  static String getMembershipRoute() => membership;
   static String getAddAddressRoute(bool fromCheckout, bool fromRide, int? zoneId, {bool isNavbar = false}) => '$addAddress?page=${fromCheckout ? 'checkout' : 'address'}&ride=$fromRide&zone_id=$zoneId&navbar=$isNavbar';
   static String getEditAddressRoute(AddressModel? address, {bool fromGuest = false}) {
     String data = 'null';
@@ -356,9 +364,16 @@ class RouteHelper {
     GetPage(name: verification, page: () {
       List<int> decode = base64Decode(Get.parameters['pass']!.replaceAll(' ', '+'));
       String data = utf8.decode(decode);
+      String? session;
+
+      if(Get.parameters['session'] != null && Get.parameters['session'] != 'null') {
+
+        session = utf8.decode(base64Url.decode(Get.parameters['session'] ?? ''));
+
+      }
       return VerificationScreen(
         number: Get.parameters['number'], fromSignUp: Get.parameters['page'] == signUp, token: Get.parameters['token'],
-        password: data,
+        password: data, firebaseSession: session,
       );
     }),
     GetPage(name: accessLocation, page: () => AccessLocationScreen(
@@ -440,12 +455,13 @@ class RouteHelper {
       String number = Get.parameters['number']!;
       int? storeId = (Get.parameters['store_id'] != null && Get.parameters['store_id'] != 'null') ? int.parse(Get.parameters['store_id']!) : null;
       bool createAccount = Get.parameters['create_account'] == 'true';
+      int? createUserId = Get.parameters['create_user_id'] != null && Get.parameters['create_user_id'] != 'null' ? int.parse(Get.parameters['create_user_id']!) : null;
       return getRoute(AppConstants.payInWevView ? PaymentWebViewScreen(
         orderModel: order, isCashOnDelivery: isCodActive, addFundUrl: addFundUrl, paymentMethod: paymentMethod, guestId: guestId,
         contactNumber: number, subscriptionUrl: subscriptionUrl, storeId: storeId, createAccount: createAccount,
       ) : PaymentScreen(
         orderModel: order, isCashOnDelivery: isCodActive, addFundUrl: addFundUrl, paymentMethod: paymentMethod, guestId: guestId,
-        contactNumber: number, subscriptionUrl: subscriptionUrl, storeId: storeId, createAccount: createAccount,
+        contactNumber: number, subscriptionUrl: subscriptionUrl, storeId: storeId, createAccount: createAccount, createUserId: createUserId,
       ));
     }),
     GetPage(name: checkout, page: () {
@@ -478,6 +494,7 @@ class RouteHelper {
     GetPage(name: support, page: () => const SupportScreen()),
     GetPage(name: update, page: () => UpdateScreen(isUpdate: Get.parameters['update'] == 'true')),
     GetPage(name: cart, page: () => getRoute(const CartScreen(fromNav: false))),
+    GetPage(name: membership, page: () => getRoute( MembershipPlansPage())),
     GetPage(name: addAddress, page: () => getRoute(AddAddressScreen(
       fromCheckout: Get.parameters['page'] == 'checkout', fromRide: Get.parameters['ride'] == 'true', zoneId: int.parse(Get.parameters['zone_id']!),
       fromNavBar: Get.parameters['navbar'] == 'true',
@@ -485,7 +502,7 @@ class RouteHelper {
     GetPage(name: editAddress, page: () {
       AddressModel? data;
       if(Get.parameters['data'] != 'null') {
-      data = AddressModel.fromJson(jsonDecode(utf8.decode(base64Url.decode(Get.parameters['data']!.replaceAll(' ', '+')))));
+        data = AddressModel.fromJson(jsonDecode(utf8.decode(base64Url.decode(Get.parameters['data']!.replaceAll(' ', '+')))));
       }
       return getRoute(AddAddressScreen(
         fromCheckout: false, fromRide: false,
@@ -540,19 +557,19 @@ class RouteHelper {
     GetPage(name: refund, page: () => RefundRequestScreen(orderId: Get.parameters['id'])),
 
     GetPage(name: selectRideMapLocation, page: () {
-    AddressModel? addressModel;
-    Vehicles? vehicle;
-    if(Get.parameters['address'] != 'null') {
-      addressModel = AddressModel.fromJson(jsonDecode(utf8.decode(base64Url.decode(Get.parameters['address']!.replaceAll(' ', '+')))));
-    }
-    if(Get.parameters['vehicle'] != 'null') {
-      vehicle = Vehicles.fromJson(jsonDecode(utf8.decode(base64Url.decode(Get.parameters['vehicle']!.replaceAll(' ', '+')))));
-    }
-    return getRoute(SelectMapLocation(
+      AddressModel? addressModel;
+      Vehicles? vehicle;
+      if(Get.parameters['address'] != 'null') {
+        addressModel = AddressModel.fromJson(jsonDecode(utf8.decode(base64Url.decode(Get.parameters['address']!.replaceAll(' ', '+')))));
+      }
+      if(Get.parameters['vehicle'] != 'null') {
+        vehicle = Vehicles.fromJson(jsonDecode(utf8.decode(base64Url.decode(Get.parameters['vehicle']!.replaceAll(' ', '+')))));
+      }
+      return getRoute(SelectMapLocation(
         riderType: jsonDecode(utf8.decode(base64Url.decode(Get.parameters['rider_type']!.replaceAll(' ', '+')))),
         address: addressModel, vehicle: vehicle,
       ),
-    );
+      );
     }),
     GetPage(name: selectCarScreen, page: () => SelectCarScreen(
         filterBody: UserInformationBody.fromJson(jsonDecode(utf8.decode(base64Url.decode(Get.parameters['body']!.replaceAll(' ', '+')))))),

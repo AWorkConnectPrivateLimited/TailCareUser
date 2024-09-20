@@ -100,7 +100,8 @@ class _TimeSlotBottomSheetState extends State<TimeSlotBottomSheet> {
                               String time = (index == 0 && checkoutController.selectedDateSlot == 0
                                   && storeController.isStoreOpenNow(storeController.store!.active!, storeController.store!.schedules)
                                   && (Get.find<SplashController>().configModel!.moduleConfig!.module!.orderPlaceToScheduleInterval! ? storeController.store!.orderPlaceToScheduleInterval == 0 : true))
-                                  ? 'instance'.tr : '${DateConverter.dateToTimeOnly(checkoutController.timeSlots![index].startTime!)} '
+                                  ? '${DateConverter.dateToTimeOnly(checkoutController.timeSlots![index].startTime!)} '
+                                  '- ${DateConverter.dateToTimeOnly(checkoutController.timeSlots![index].endTime!)}' : '${DateConverter.dateToTimeOnly(checkoutController.timeSlots![index].startTime!)} '
                                   '- ${DateConverter.dateToTimeOnly(checkoutController.timeSlots![index].endTime!)}';
                               return SlotWidget(
                                 title: time,

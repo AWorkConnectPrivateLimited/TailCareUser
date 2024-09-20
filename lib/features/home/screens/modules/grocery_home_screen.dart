@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:sixam_mart/features/flash_sale/widgets/flash_sale_view_widget.dart';
 import 'package:sixam_mart/features/home/widgets/bad_weather_widget.dart';
 import 'package:sixam_mart/features/home/widgets/highlight_widget.dart';
@@ -16,6 +17,9 @@ import 'package:sixam_mart/features/home/widgets/views/special_offer_view.dart';
 import 'package:sixam_mart/features/home/widgets/views/promotional_banner_view.dart';
 import 'package:sixam_mart/features/home/widgets/views/visit_again_view.dart';
 import 'package:sixam_mart/helper/auth_helper.dart';
+
+import '../../../coupon/domain/models/coupon_model.dart';
+import '../../../store/controllers/store_controller.dart';
 
 
 class GroceryHomeScreen extends StatelessWidget {
@@ -44,15 +48,34 @@ class GroceryHomeScreen extends StatelessWidget {
       const SpecialOfferView(isFood: false, isShop: false),
       const HighlightWidget(),
       const FlashSaleViewWidget(),
-      const BestStoreNearbyView(),
+
+    GetBuilder<StoreController>(builder: (storeController) {
+      return (storeController
+          .storeModel!.stores != null && storeController
+          .storeModel!.stores!.isNotEmpty && storeController
+          .storeModel!.totalSize! > 1) ?   const BestStoreNearbyView():SizedBox();
+
+
+    }),
       const MostPopularItemView(isFood: false, isShop: false),
       const MiddleSectionBannerView(),
       const BestReviewItemView(),
       const JustForYouView(),
       const ItemThatYouLoveView(forShop: false),
       isLoggedIn ? const PromoCodeBannerView() : const SizedBox(),
-      const NewOnMartView(isPharmacy: false, isShop: false),
-      const PromotionalBannerView(),
+
+      GetBuilder<StoreController>(builder: (storeController) {
+
+
+        return (storeController
+            .storeModel!.stores != null && storeController
+            .storeModel!.stores!.isNotEmpty && storeController
+            .storeModel!.totalSize! > 1) ?  const NewOnMartView(isPharmacy: false, isShop: false):SizedBox();
+
+
+      }),
+
+      // const PromotionalBannerView(),
     ]);
   }
 }

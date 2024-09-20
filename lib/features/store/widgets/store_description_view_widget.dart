@@ -146,7 +146,7 @@ class StoreDescriptionViewWidget extends StatelessWidget {
         ])),
 
       ]) : const SizedBox(),
-      SizedBox(height: ResponsiveHelper.isDesktop(context) ? 30 : Dimensions.paddingSizeSmall),
+      // SizedBox(height: ResponsiveHelper.isDesktop(context) ? 30 : Dimensions.paddingSizeSmall),
 
      ResponsiveHelper.isDesktop(context) ?
      IntrinsicHeight(
@@ -207,69 +207,120 @@ class StoreDescriptionViewWidget extends StatelessWidget {
          (store!.delivery! && store!.freeDelivery!) ? Column(children: [
            Icon(Icons.money_off, color: Theme.of(context).primaryColor, size: 20),
            const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-           Text('free_delivery'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: textColor)),
+           Text('free_delivery'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor)),
          ]) : const SizedBox(),
          const Expanded(child: SizedBox()),
        ]),
      ):
-     Row(children: [
-       const Expanded(child: SizedBox()),
-       InkWell(
-         onTap: () => Get.toNamed(RouteHelper.getStoreReviewRoute(store!.id, store!.name, store!)),
-         child: Column(children: [
-           Row(children: [
-             Icon(Icons.star, color: Theme.of(context).primaryColor, size: 20),
-             const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-             Text(
-               store!.avgRating!.toStringAsFixed(1),
-               style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: textColor),
-             ),
-           ]),
-           const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-           Text(
-             '${store!.ratingCount} + ${'ratings'.tr}',
-             style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: textColor),
-           ),
-         ]),
-       ),
-       const Expanded(child: SizedBox()),
+     Column(
+
+       children: [
 
 
-       InkWell(
-         onTap: () => Get.toNamed(RouteHelper.getMapRoute(
-           AddressModel(id: store!.id, address: store!.address, latitude: store!.latitude,
-             longitude: store!.longitude, contactPersonNumber: '', contactPersonName: '', addressType: '',
-           ), 'store', Get.find<SplashController>().getModuleConfig(Get.find<SplashController>().module!.moduleType!).newVariation!,
-           storeName: store!.name,
-         )),
-         child: Column(children: [
-           Icon(Icons.location_on, color: Theme.of(context).primaryColor, size: 20),
-           const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-           Text('location'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: textColor)),
-         ]),
-       ),
-       const Expanded(child: SizedBox()),
+         // Padding(
+         //   padding: const EdgeInsets.all(8.0),
+         //   child: InkWell(
+         //     onTap: () => Get.toNamed(RouteHelper.getStoreReviewRoute(store!.id, store!.name, store!)),
+         //     child: Column(
+         //         mainAxisAlignment: MainAxisAlignment.center,
+         //         children: [
+         //       Row(
+         //           mainAxisAlignment: MainAxisAlignment.center,
+         //           children: [
+         //         Icon(Icons.star, color: Theme.of(context).primaryColor, size: 20),
+         //         const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+         //         Text(
+         //           store!.avgRating!.toStringAsFixed(1),
+         //           style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
+         //         ),
+         //       ]),
+         //       const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+         //       Text(
+         //         '${store!.storeOpeningTime} + ${store!.}',
+         //         style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
+         //       ),
+         //     ]),
+         //   ),
+         // ),
 
-       Column(children: [
+
+
+
+         // Padding(
+         //   padding: const EdgeInsets.all(8.0),
+         //   child: ClipRRect(
+         //     borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+         //     child: CustomImage(
+         //       width: double.infinity,
+         //       height: 200,
+         //       fit: BoxFit.cover,
+         //       image: '${store!.coverPhotoFullUrl}',
+         //     ),
+         //   ),
+         // ),
          Row(children: [
-           Icon(Icons.timer, color: Theme.of(context).primaryColor, size: 20),
-           const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-           Text(
-             store!.deliveryTime!,
-             style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: textColor),
+
+           const Expanded(child: SizedBox()),
+           InkWell(
+             onTap: () => Get.toNamed(RouteHelper.getStoreReviewRoute(store!.id, store!.name, store!)),
+             child: Column(children: [
+               Row(children: [
+                 Icon(Icons.star, color: Theme.of(context).primaryColor, size: 20),
+                 const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                 Text(
+                   store!.avgRating!.toStringAsFixed(1),
+                   style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
+                 ),
+               ]),
+               const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+               Text(
+                 '${store!.ratingCount} + ${'ratings'.tr}',
+                 style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
+               ),
+             ]),
            ),
+           const Expanded(child: SizedBox()),
+
+
+           InkWell(
+             onTap: () => Get.toNamed(RouteHelper.getMapRoute(
+               AddressModel(id: store!.id, address: store!.address, latitude: store!.latitude,
+                 longitude: store!.longitude, contactPersonNumber: '', contactPersonName: '', addressType: '',
+               ), 'store', Get.find<SplashController>().getModuleConfig(Get.find<SplashController>().module!.moduleType!).newVariation!,
+               storeName: store!.name,
+             )),
+             child: Column(children: [
+               Icon(Icons.location_on, color: Theme.of(context).primaryColor, size: 20),
+               const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+               Text('location'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor)),
+             ]),
+           ),
+           const Expanded(child: SizedBox()),
+
+           Column(children: [
+
+
+             Row(children: [
+               Icon(Icons.timer, color: Theme.of(context).primaryColor, size: 20),
+               const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+               Text(
+                 store!.deliveryTime!,
+                 style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
+               ),
+             ]),
+             const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+             Text('delivery_time'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor)),
+           ]),
+           (store!.delivery! && store!.freeDelivery!) ? const Expanded(child: SizedBox()) : const SizedBox(),
+           (store!.delivery! && store!.freeDelivery!) ? Column(children: [
+             Icon(Icons.money_off, color: Theme.of(context).primaryColor, size: 20),
+             const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+             Text('free_delivery'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor)),
+           ]) : const SizedBox(),
+           const Expanded(child: SizedBox()),
          ]),
-         const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-         Text('delivery_time'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: textColor)),
-       ]),
-       (store!.delivery! && store!.freeDelivery!) ? const Expanded(child: SizedBox()) : const SizedBox(),
-       (store!.delivery! && store!.freeDelivery!) ? Column(children: [
-         Icon(Icons.money_off, color: Theme.of(context).primaryColor, size: 20),
-         const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-         Text('free_delivery'.tr, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: textColor)),
-       ]) : const SizedBox(),
-       const Expanded(child: SizedBox()),
-     ]),
+       ],
+     ),
 
 
     ]);
